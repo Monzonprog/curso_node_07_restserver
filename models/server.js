@@ -11,14 +11,38 @@ class Server {
         this.route();
     }
 
-    middlewares(){
+    middlewares() {
         //Directorio público
-        this.app.use(express.static('public'))
+        this.app.use(express.static('public'));
     }
 
     route() {
         this.app.get('/api', (req, res) => {
-            res.send('Hello World');
+            res.json({
+                ok: true,
+                msg: 'get API',
+            });
+        });
+
+        this.app.put('/api', (req, res) => {
+            res.json({
+                ok: true,
+                msg: 'put API',
+            });
+        });
+
+        this.app.post('/api', (req, res) => {
+            res.json({
+                ok: true,
+                msg: 'post API',
+            });
+        });
+
+        this.app.delete('/api', (req, res) => {
+            res.json({
+                ok: true,
+                msg: 'delete API',
+            });
         });
     }
 
