@@ -1,10 +1,11 @@
 const express = require('express');
-var cors = require('cors')
+var cors = require('cors');
 
 class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
+        this.usuariosPatch = '/api/usuarios';
 
         //Middlewares
         this.middlewares();
@@ -20,33 +21,7 @@ class Server {
     }
 
     route() {
-        this.app.get('/api', (req, res) => {
-            res.json({
-                ok: true,
-                msg: 'get API',
-            });
-        });
-
-        this.app.put('/api', (req, res) => {
-            res.json({
-                ok: true,
-                msg: 'put API',
-            });
-        });
-
-        this.app.post('/api', (req, res) => {
-            res.json({
-                ok: true,
-                msg: 'post API',
-            });
-        });
-
-        this.app.delete('/api', (req, res) => {
-            res.json({
-                ok: true,
-                msg: 'delete API',
-            });
-        });
+        this.app.use(this.usuariosPatch, require('../routes/usuarios'));
     }
 
     listener() {
