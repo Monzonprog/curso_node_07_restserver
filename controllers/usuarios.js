@@ -2,27 +2,24 @@ const { response, request } = require('express');
 const bcryptjs = require('bcryptjs');
 const Usuario = require('../models/usuario');
 
-const usuariosGet = (req, res = response) => {
-    const { q, nombre = 'No name', apikey, page = '1', limit } = req.query;
+const usuariosGet = async (req, res = response) => {
+    const { limite = 5, desde = 0 } = req.query;
+    const usuarios = await Usuario.find()
+        .limit(Number(limite))
+        .skip(Number(desde));
 
     res.json({
-        msg: 'get API - controlador',
-        q,
-        apikey,
-        nombre,
-        page,
-        limit,
+        usuarios,
     });
 };
 
 const usuariosPost = async (req, res) => {
-
     const { nombre, correo, password, rol } = req.body;
     const usuario = new Usuario({ nombre, correo, password, rol });
 
     //Encriptar contraseña
     const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync(password, salt)
+    usuario.password = bcryptjs.hashSync(password, salt);
 
     //Guardar en BD
     await usuario.save();
@@ -32,21 +29,19 @@ const usuariosPost = async (req, res) => {
     });
 };
 
-const usuariosPut = async(req, res) => {
-    const {id} = req.params;
-    const {_id, password, google, correo, ...resto} = req.body
+const usuariosPut = async (req, res) => {
+    const { id } = req.params;
+    const { _id, password, google, correo, ...resto } = req.body;
 
     //TODO validar contra BD
-    if(password){
+    if (password) {
         //Encriptar contraseña
         const salt = bcryptjs.genSaltSync();
         resto.password = bcryptjs.hashSync(password, salt);
     }
 
-    const usuario = await Usuario.findByIdAndUpdate(id, resto)
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
 
-
-    
     res.json({
         msg: 'put API - controlador',
         usuario,
