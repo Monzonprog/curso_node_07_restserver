@@ -4,11 +4,15 @@ const Usuario = require('../models/usuario');
 
 const usuariosGet = async (req, res = response) => {
     const { limite = 5, desde = 0 } = req.query;
-    const usuarios = await Usuario.find()
-        .limit(Number(limite))
-        .skip(Number(desde));
+    const query = { estado: true };
+
+    const [total, usuarios] = await Promise.all([
+        Usuario.countDocuments(query),
+        Usuario.find(query).limit(Number(limite)).skip(Number(desde)),
+    ]);
 
     res.json({
+        total,
         usuarios,
     });
 };
@@ -33,9 +37,7 @@ const usuariosPut = async (req, res) => {
     const { id } = req.params;
     const { _id, password, google, correo, ...resto } = req.body;
 
-    //TODO validar contra BD
     if (password) {
-        //Encriptar contraseña
         const salt = bcryptjs.genSaltSync();
         resto.password = bcryptjs.hashSync(password, salt);
     }
@@ -47,9 +49,13 @@ const usuariosPut = async (req, res) => {
         usuario,
     });
 };
-const usuariosDelete = (req, res) => {
+const usuariosDelete = async (req, res) => {
+    const { id } = req.params;
+
+    //const usuario = await Usuario.findByIdAndDelete(id);
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
     res.json({
-        msg: 'delete API - controlador',
+        usuario,
     });
 };
 
