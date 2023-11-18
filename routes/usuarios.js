@@ -12,7 +12,7 @@ const {
     esRoleValido,
     emailExiste,
     existeUsuarioPorId,
-} = require('../helpers/db-validatos');
+} = require('../helpers/db-validator');
 const {
     usuariosGet,
     usuariosPost,
